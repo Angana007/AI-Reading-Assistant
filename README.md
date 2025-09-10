@@ -1,50 +1,44 @@
-# AI-Reading-Assistant
-An intelligent reading companion that helps you choose, listen, and enjoy books hands-free. The app combines speech recognition, text-to-speech, and conversational AI to transform books into natural audio experiences.
+# 📚 AI Reading Assistant
 
-🚀 Features
+An intelligent reading companion that helps you **choose, listen, and enjoy books hands-free**.  
+The app combines **speech recognition, text-to-speech, and conversational AI** to transform books into natural audio experiences.
 
-📖 Book Upload – Upload your own PDFs or EPUBs.
+---
 
-🎙️ Read Out Loud – High-quality text-to-speech (Google TTS / OpenAI TTS).
+## 🚀 Features
 
-🗣️ Voice Commands – Control playback with simple commands like “Pause”, “Next Chapter”.
+- 📖 **Book Upload** – Upload your own PDFs or EPUBs.  
+- 🎙️ **Read Out Loud** – High-quality text-to-speech (Google TTS / OpenAI TTS).  
+- 🗣️ **Voice Commands** – Control playback with simple commands like *“Pause”*, *“Next Chapter”*.  
+- 🤖 **AI Book Assistant** – Ask questions like *“Which book should I read?”* or *“Tell me about the author”*.  
+- 🔖 **Progress Tracking** – Resume where you left off.  
 
-🤖 AI Book Assistant – Ask questions like “Which book should I read?” or “Tell me about the author”.
+---
 
-🔖 Progress Tracking – Resume where you left off.
+## 🛠️ Tech Stack
 
-🛠️ Tech Stack
+- **Frontend**: Flutter (cross-platform mobile)  
+- **Backend**: FastAPI  
+- **Text-to-Speech**: Google Cloud TTS / OpenAI TTS  
+- **Speech-to-Text**: OpenAI Whisper  
+- **AI Assistant**: OpenAI GPT (recommendations & Q&A)  
+- **Database**: SQLite / Firebase for storage  
 
-Frontend: Flutter (cross-platform mobile)
+---
 
-Backend: FastAPI (or n8n workflows for API orchestration)
+## 📂 How It Works
 
-Text-to-Speech: Google Cloud TTS / OpenAI TTS
+1. Upload or select a book (PDF/EPUB or public domain from Project Gutenberg).  
+2. The system extracts chapters and converts **text → audio** using TTS.  
+3. Listen seamlessly with play/pause/seek controls.  
+4. Use your voice for commands (*“Next page”*) or to ask the AI assistant.  
 
-Speech-to-Text: OpenAI Whisper
+---
 
-AI Assistant: OpenAI GPT (recommendations & Q&A)
+## 🎯 Roadmap
 
-Database: SQLite / Firebase for storage
-
-📂 How It Works
-
-Upload or select a book (PDF/EPUB or public domain from Project Gutenberg).
-
-The system extracts chapters and converts text → audio using TTS.
-
-Listen seamlessly with play/pause/seek controls.
-
-Use your voice for commands (“Next page”) or to ask the AI assistant.
-
-🎯 Roadmap
-
- MVP: Upload book + Read out loud
-
- Voice commands for playback
-
- AI assistant for book suggestions
-
- Save reading progress
-
- Multi-language support
+- [x] **MVP:** Upload book + Read out loud  
+- [ ] Voice commands for playback  
+- [ ] AI assistant for book suggestions  
+- [ ] Save reading progress  
+- [ ] Multi-language support  
