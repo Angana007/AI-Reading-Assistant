@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 function App() {
@@ -9,9 +9,17 @@ function App() {
   const [progress, setProgress] = useState(0);
   const [jobId, setJobId] = useState(null);
 
+  const isPolling = useRef(false); // prevent multiple polling intervals
+
   const voices = ["ash", "alloy", "verse", "sage"];
 
-  const handleFileChange = (e) => setPdfFile(e.target.files[0]);
+  const handleFileChange = (e) => {
+    setPdfFile(e.target.files[0]);
+    // Reset state on new file selection
+    setAudioUrl(null);
+    setProgress(0);
+    setJobId(null);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,35 +33,55 @@ function App() {
       setLoading(true);
       setProgress(0);
       setAudioUrl(null);
+      setJobId(null);
+      isPolling.current = false;
 
-      const response = await axios.post("http://localhost:8000/upload/", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await axios.post("http://localhost:8000/upload/", formData);
 
-      setJobId(response.data.job_id);
-      setAudioUrl(`http://localhost:8000${response.data.audio_url}`);
+      if (response.data.job_id && response.data.audio_url) {
+        setJobId(response.data.job_id);
+        setAudioUrl(`http://localhost:8000${response.data.audio_url}`);
+      } else {
+        throw new Error("Invalid response from server");
+      }
     } catch (err) {
-      console.error(err);
-      alert("Error uploading PDF");
+      console.error("Upload or server error:", err);
+      alert("Error uploading PDF or starting audio generation");
+      setLoading(false);
     }
   };
 
   // Poll backend for progress every 1s
   useEffect(() => {
     let interval;
-    if (jobId) {
+    if (jobId && !isPolling.current) {
+      isPolling.current = true;
       interval = setInterval(async () => {
         try {
           const res = await axios.get(`http://localhost:8000/progress/${jobId}`);
-          setProgress(res.data.progress);
-          if (res.data.progress >= 100 || res.data.progress === -1) {
-            clearInterval(interval);
-            setLoading(false);
+
+          if (res.data.progress !== undefined) {
+            setProgress(res.data.progress);
+
+            if (res.data.progress >= 100) {
+              clearInterval(interval);
+              setLoading(false);
+              isPolling.current = false;
+            } else if (res.data.progress === -1) {
+              clearInterval(interval);
+              setLoading(false);
+              isPolling.current = false;
+              alert("Error generating audio. Please try again.");
+            }
+          } else {
+            throw new Error("Invalid progress response");
           }
         } catch (err) {
-          console.error(err);
+          console.error("Error fetching progress:", err);
           clearInterval(interval);
           setLoading(false);
+          isPolling.current = false;
+          alert("Error fetching progress from server");
         }
       }, 1000);
     }
@@ -74,7 +102,9 @@ function App() {
           <label>Select Voice: </label>
           <select value={voice} onChange={(e) => setVoice(e.target.value)}>
             {voices.map((v) => (
-              <option key={v} value={v}>{v}</option>
+              <option key={v} value={v}>
+                {v}
+              </option>
             ))}
           </select>
         </div>
@@ -100,10 +130,11 @@ function App() {
         </div>
       )}
 
+      {/* Audio player and download link */}
       {audioUrl && !loading && (
         <div style={{ marginTop: 30 }}>
           <h3>🎧 Listen to your audiobook:</h3>
-          <audio controls src={audioUrl} autoPlay />
+          <audio controls src={audioUrl} autoPlay preload="auto" />
           <a href={audioUrl} download style={{ display: "block", marginTop: 10 }}>
             ⬇️ Download Audio
           </a>
